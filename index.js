@@ -1,4 +1,6 @@
+require('dotenv').config();
 const express = require('express');
+const twilio = require('twilio');
 const { sendInteractiveMessage } = require('./whatsappBot');
 
 const app = express();
@@ -16,11 +18,11 @@ app.get('/', (req, res) => {
 
 // Route for submitting homework and sending a WhatsApp notification
 app.post('/submit-lesson', async (req, res) => {
-    const { accountSid, authToken, phoneNumber, subject, lessonDetails, dueDate } = req.body;
+    const { accountSid, authToken, contentSid, phoneNumber, subject, lessonDetails, dueDate } = req.body;
 
     try {
-        // Pass the credentials and phone number dynamically
-        await sendInteractiveMessage(accountSid, authToken, phoneNumber, subject, lessonDetails, dueDate);
+        // Send the interactive WhatsApp message with the provided contentSid
+        await sendInteractiveMessage(accountSid, authToken, contentSid, phoneNumber, subject, lessonDetails, dueDate);
         res.status(200).send("Homework submission notification sent via WhatsApp.");
     } catch (error) {
         console.error("Error submitting homework:", error);
