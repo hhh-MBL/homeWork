@@ -18,7 +18,7 @@ EXPOSE 3000
 
 # Set environment variables directly in Docker
 ENV TWILIO_ACCOUNT_SID=ACa2e4735e2094f9f51f9878a33a65dda6
-ENV TWILIO_AUTH_TOKEN=ec22a9cf62055ef856aeb3691f42c979
+ENV TWILIO_AUTH_TOKEN=ed73e25b0bdeafcfc7c7aa9717319d31
 
 # Command to run the app
 CMD [ "node", "index.js" ]
