@@ -102,7 +102,8 @@
             cursor: pointer;
             border: none;
             margin-bottom: 20px;
-            width: 100%;
+            margin-left: 20px;
+            max-width: 250px; /* Add max-width so it doesn't stretch */
             font-weight: 500;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
@@ -116,14 +117,22 @@
             transform: translateY(0);
         }
 
+        .nav-button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Button to navigate to the Docs website -->
-    <button class="nav-button" onclick="window.location.href='https://hhh-mbl.github.io/docs/#/'">
-        מעבר לאתר ההנחיות
-    </button>
+    <div class="nav-button-container">
+        <button class="nav-button" onclick="window.location.href='https://hhh-mbl.github.io/docs/#/'">
+            מעבר לאתר ההנחיות
+        </button>
+    </div>
 
     <div class="container">
         <h1>הגשת שיעורי בית</h1>
