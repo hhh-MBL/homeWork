@@ -70,6 +70,18 @@
     <div class="container">
         <h1>הגשת שיעורי בית</h1>
         <form id="lessonForm" action="/submit-lesson" method="POST">
+            <!-- Twilio Account SID -->
+            <label for="accountSid">Twilio Account SID:</label>
+            <input type="text" id="accountSid" name="accountSid" placeholder="Your Twilio Account SID" required>
+            
+            <!-- Twilio Auth Token -->
+            <label for="authToken">Twilio Auth Token:</label>
+            <input type="text" id="authToken" name="authToken" placeholder="Your Twilio Auth Token" required>
+            
+            <!-- Phone Number to send to -->
+            <label for="phoneNumber">מספר טלפון:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="whatsapp:+972XXXXXXXXX" required>
+
             <label for="subject">מקצוע:</label>
             <input type="text" id="subject" name="subject" required>
 
