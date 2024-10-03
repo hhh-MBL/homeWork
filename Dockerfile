@@ -13,6 +13,9 @@ RUN npm install
 # Copy all files from the current directory to the working directory inside the container
 COPY . .
 
+# Copy the .env file for environment variables
+COPY .env .env
+
 # Expose the port the app runs on
 EXPOSE 3000
 
