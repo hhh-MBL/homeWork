@@ -3,167 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הגשת שיעורי בית</title>
+    <title>הגשת שיעורי בית ותזכורות למבחנים</title>
     <style>
-        /* Global styling */
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #eef2f3; /* Softer background */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
-            padding: 20px;
-            direction: rtl;
+            direction: rtl; /* Set text direction to right-to-left */
         }
 
-        /* Container styling */
+        .doc-button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .doc-button:hover {
+            background-color: #218838;
+        }
+
+        .container-wrapper {
+            display: flex;
+            gap: 20px; /* Space between the containers */
+        }
+
         .container {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Softer, modern shadow */
-            max-width: 500px;
-            width: 100%;
-            text-align: right; /* Align text to right for Hebrew */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
         }
 
-        /* Headings styling */
-        h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 20px;
+        h1, h2 {
             text-align: center;
+            color: #333;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            margin-top: 10px;
             color: #555;
-            margin-bottom: 5px;
         }
 
         input[type="text"],
         input[type="date"],
         textarea {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px;
+            margin-top: 5px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            background-color: #fafafa;
-            transition: border-color 0.3s ease;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #f9f9f9;
         }
 
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        textarea:focus {
-            border-color: #007bff; /* Highlight border on focus */
-            outline: none;
-        }
-
-        /* Submit button styling */
         button {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 16px;
-            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 10px;
         }
 
         button:hover {
             background-color: #0056b3;
-            transform: translateY(-3px);
         }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Navigation button styling */
-        .nav-button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            margin-bottom: 20px;
-            margin-left: 20px;
-            max-width: 250px; /* Add max-width so it doesn't stretch */
-            font-weight: 500;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .nav-button:hover {
-            background-color: #218838;
-            transform: translateY(-3px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-        }
-
-        .nav-button-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
     </style>
 </head>
 <body>
-    <!-- Button to navigate to the Docs website -->
-    <div class="nav-button-container">
-        <button class="nav-button" onclick="window.location.href='https://hhh-mbl.github.io/docs/#/'">
-            מעבר לאתר ההנחיות
-        </button>
+    <!-- Button to navigate to the documentation -->
+    <a href="https://hhh-mbl.github.io/docs/#/" target="_blank">
+        <button class="doc-button">הצג מסמכי עזרה</button>
+    </a>
+
+    <div class="container-wrapper">
+        <!-- Homework submission form -->
+        <div class="container">
+            <h1>הגשת שיעורי בית</h1>
+            <form id="lessonForm" action="/submit-lesson" method="POST">
+                <!-- Twilio Account SID -->
+                <label for="accountSid">Twilio Account SID:</label>
+                <input type="text" id="accountSid" name="accountSid" placeholder="Your Twilio Account SID" required>
+                
+                <!-- Twilio Auth Token -->
+                <label for="authToken">Twilio Auth Token:</label>
+                <input type="text" id="authToken" name="authToken" placeholder="Your Twilio Auth Token" required>
+                
+                <!-- Content SID for homework submission -->
+                <label for="contentSid">Twilio Content SID:</label>
+                <input type="text" id="contentSid" name="contentSid" placeholder="Your Twilio Content SID" required>
+
+                <!-- Phone Number to send to -->
+                <label for="phoneNumber">מספר טלפון:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder="whatsapp:+972XXXXXXXXX" required>
+
+                <label for="subject">מקצוע:</label>
+                <input type="text" id="subject" name="subject" required>
+
+                <label for="lessonDetails">פרטי השיעור:</label>
+                <textarea id="lessonDetails" name="lessonDetails" rows="4" required></textarea>
+            
+                <label for="dueDate">תאריך הגשה (YYYY-MM-DD):</label>
+                <input type="date" id="dueDate" name="dueDate" required>
+            
+                <button type="submit">שלח שיעורי בית</button>
+            </form>
+        </div>
+
+        <!-- Section for setting up exams/tests (No Content SID required) -->
+        <div class="container">
+            <h2>הגדרת תזכורות למבחנים</h2>
+            <form id="examForm" action="/set-exam" method="POST">
+                <!-- Twilio Account SID for exam reminders -->
+                <label for="accountSidExam">Twilio Account SID:</label>
+                <input type="text" id="accountSidExam" name="accountSidExam" placeholder="Your Twilio Account SID" required>
+                
+                <!-- Twilio Auth Token -->
+                <label for="authTokenExam">Twilio Auth Token:</label>
+                <input type="text" id="authTokenExam" name="authTokenExam" placeholder="Your Twilio Auth Token" required>
+
+                <label for="examSubject">מקצוע המבחן:</label>
+                <input type="text" id="examSubject" name="examSubject" required>
+
+                <label for="examDate">תאריך המבחן (YYYY-MM-DD):</label>
+                <input type="date" id="examDate" name="examDate" required>
+                
+                <button type="submit">הגדר מבחן</button>
+            </form>
+        </div>
     </div>
-
-    <div class="container">
-        <h1>הגשת שיעורי בית</h1>
-        <form id="lessonForm" action="/submit-lesson" method="POST">
-            <!-- Twilio Account SID -->
-            <label for="accountSid">Twilio Account SID:</label>
-            <input type="text" id="accountSid" name="accountSid" placeholder="Your Twilio Account SID" required>
-            
-            <!-- Twilio Auth Token -->
-            <label for="authToken">Twilio Auth Token:</label>
-            <input type="text" id="authToken" name="authToken" placeholder="Your Twilio Auth Token" required>
-            
-            <!-- Content SID -->
-            <label for="contentSid">Content SID:</label>
-            <input type="text" id="contentSid" name="contentSid" placeholder="Your Content SID" required>
-            
-            <!-- Phone Number to send to -->
-            <label for="phoneNumber">מספר טלפון:</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="whatsapp:+972XXXXXXXXX" required>
-
-            <label for="subject">מקצוע:</label>
-            <input type="text" id="subject" name="subject" required>
-
-            <label for="lessonDetails">פרטי השיעור:</label>
-            <textarea id="lessonDetails" name="lessonDetails" rows="4" required></textarea>
-        
-            <label for="dueDate">תאריך הגשה (YYYY-MM-DD):</label>
-            <input type="date" id="dueDate" name="dueDate" required>
-        
-            <button type="submit">שלח שיעורי בית</button>
-        </form>
-    </div>
-
 </body>
 </html>
