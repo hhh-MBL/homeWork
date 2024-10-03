@@ -1,13 +1,13 @@
 const twilio = require('twilio');
 
 // Initialize Twilio client with your credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID; // Replace with your actual Account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN;   // Replace with your actual Auth Token
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = new twilio(accountSid, authToken);
 
 // Use the Twilio sandbox number for WhatsApp messaging
-const fromWhatsAppNumber = 'whatsapp:+14155238886'; // Twilio sandbox number
-const toWhatsAppNumber = 'whatsapp:+972506969345';  // Recipient's WhatsApp number
+const fromWhatsAppNumber = 'whatsapp:+14155238886'; 
+const toWhatsAppNumber = 'whatsapp:+972506969345';  
 
 // Send a message using the content template
 async function sendInteractiveMessage(subject, lessonDetails, dueDate) {
@@ -15,12 +15,11 @@ async function sendInteractiveMessage(subject, lessonDetails, dueDate) {
         const message = await client.messages.create({
             from: fromWhatsAppNumber,
             to: toWhatsAppNumber,
-            contentSid: 'HX726f836f470b19b2521af8cdd430e411',  // Your content template SID
-            statusCallback: 'https://homework1-0g1pz9u6.b4a.run/incoming-message',
+            contentSid: 'HX726f836f470b19b2521af8cdd430e411',  
             contentVariables: JSON.stringify({
-                '1': subject,         // Corresponds to {{1}} in your template
-                '2': lessonDetails,   // Corresponds to {{2}} in your template
-                '3': dueDate          // Corresponds to {{3}} in your template
+                '1': subject,
+                '2': lessonDetails,
+                '3': dueDate
             })
         });
 
