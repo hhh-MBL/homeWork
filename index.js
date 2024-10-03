@@ -7,13 +7,9 @@ const app = express();
 const port = 3000;
 
 // Twilio credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID;  // Your Twilio Account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN;    // Your Twilio Auth Token
+const accountSid = "ACa2e4735e2094f9f51f9878a33a65dda6";  // Your Twilio Account SID
+const authToken = "ed73e25b0bdeafcfc7c7aa9717319d31";    // Your Twilio Auth Token
 const client = twilio(accountSid, authToken);
-
-// Logging Twilio credentials to ensure they're loaded
-console.log("TWILIO_ACCOUNT_SID:", process.env.TWILIO_ACCOUNT_SID);
-console.log("TWILIO_AUTH_TOKEN:", process.env.TWILIO_AUTH_TOKEN);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // Handle JSON data
