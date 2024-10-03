@@ -16,7 +16,7 @@ async function sendInteractiveMessage(subject, lessonDetails, dueDate) {
             from: fromWhatsAppNumber,
             to: toWhatsAppNumber,
             contentSid: 'HX726f836f470b19b2521af8cdd430e411',  // Your content template SID
-            statusCallback: 'https://6fd0-87-71-184-20.ngrok-free.app/incoming-message',
+            statusCallback: 'https://homework1-0g1pz9u6.b4a.run/incoming-message',
             contentVariables: JSON.stringify({
                 '1': subject,         // Corresponds to {{1}} in your template
                 '2': lessonDetails,   // Corresponds to {{2}} in your template
