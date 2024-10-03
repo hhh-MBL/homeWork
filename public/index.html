@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
             direction: rtl; /* Set text direction to right-to-left */
@@ -64,9 +64,29 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .nav-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .nav-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
+    <!-- Button to navigate to the Docs website -->
+    <button class="nav-button" onclick="window.location.href='https://hhh-mbl.github.io/docs/#/'">
+        מעבר לאתר ההנחיות
+    </button>
+
     <div class="container">
         <h1>הגשת שיעורי בית</h1>
         <form id="lessonForm" action="/submit-lesson" method="POST">
