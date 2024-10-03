@@ -2,17 +2,21 @@ require('dotenv').config();
 const express = require('express');
 const twilio = require('twilio');
 const { sendInteractiveMessage } = require('./whatsappBot');
+const cron = require('node-cron');
 
 const app = express();
 const port = 3000;
 
-// Twilio credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID;  // Your Twilio Account SID
-const authToken = process.env.TWILIO_AUTH_TOKEN;    // Your Twilio Auth Token
-const client = twilio(accountSid, authToken);
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // Handle JSON data
+
+// Twilio credentials
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
+
+// In-memory storage for exams (replace with a database for persistent storage if needed)
+let examData = {};
 
 // Serve the HTML form
 const path = require('path');
@@ -23,11 +27,14 @@ app.get('/', (req, res) => {
 
 // Route for submitting homework and sending a WhatsApp notification
 app.post('/submit-lesson', async (req, res) => {
-    const { subject, lessonDetails, dueDate } = req.body;
+    const { accountSid, authToken, contentSid, phoneNumber, subject, lessonDetails, dueDate } = req.body;
+
+    // Initialize the Twilio client with credentials from the form
+    const client = twilio(accountSid, authToken);
 
     try {
-        // Send the interactive WhatsApp message
-        await sendInteractiveMessage(subject, lessonDetails, dueDate); // Implement this in whatsappBot.js
+        // Send the interactive WhatsApp message using Twilio API
+        await sendInteractiveMessage(client, contentSid, phoneNumber, subject, lessonDetails, dueDate);
         res.status(200).send("Homework submission notification sent via WhatsApp.");
     } catch (error) {
         console.error("Error submitting homework:", error);
@@ -35,71 +42,58 @@ app.post('/submit-lesson', async (req, res) => {
     }
 });
 
-// Status callback route to check if the message has been delivered
-app.post('/status-callback', (req, res) => {
-    const messageStatus = req.body.MessageStatus;
-    const messageSid = req.body.MessageSid;
+// Route for setting up exams and scheduling reminders
+app.post('/set-exam', (req, res) => {
+    const { accountSidExam, authTokenExam, phoneNumber, examSubject, examDate } = req.body;
 
-    console.log(`Message SID ${messageSid} has status: ${messageStatus}`);
+    // Store exam details in memory
+    examData[examSubject] = { examDate };
 
-    if (messageStatus === 'delivered') {
-        console.log(`Message with SID ${messageSid} is delivered and can be deleted.`);
-    }
-
-    res.status(200).send();  // Respond with 200 OK
+    // Schedule reminders for 3, 2, and 1 day(s) before the exam
+    scheduleReminders(accountSidExam, authTokenExam, phoneNumber, examSubject, examDate);
+    res.status(200).send("Exam set and reminders will be sent.");
 });
 
-// Poll for message status and delete once it's not "receiving"
-async function waitForDeliveryAndDelete(messageSid) {
-    try {
-        const maxRetries = 10;  // Max number of times to check
-        let attempts = 0;
+// Function to schedule reminders 3, 2, and 1 day before the exam
+function scheduleReminders(accountSid, authToken, phoneNumber, subject, examDate) {
+    const examDateObj = new Date(examDate);
 
-        while (attempts < maxRetries) {
-            const message = await client.messages(messageSid).fetch();
-            console.log(`Current status of message SID ${messageSid}: ${message.status}`);
+    // Reminder intervals: 3 days, 2 days, and 1 day before
+    const reminderDays = [3, 2, 1];
+    
+    reminderDays.forEach(daysBefore => {
+        const reminderDate = new Date(examDateObj);
+        reminderDate.setDate(reminderDate.getDate() - daysBefore);
 
-            // If the message is no longer "receiving", try to delete it
-            if (message.status !== 'receiving') {
-                try {
-                    await client.messages(messageSid).remove();
-                    console.log(`Message with SID ${messageSid} has been deleted.`);
-                    break;  // Exit the loop once deleted
-                } catch (error) {
-                    console.error(`Error deleting message with SID ${messageSid}:`, error);
-                }
-            } else {
-                console.log(`Message SID ${messageSid} is still receiving. Retrying...`);
-            }
-
-            // Wait for 5 seconds before checking again
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            attempts++;
-        }
-
-        if (attempts === maxRetries) {
-            console.log(`Failed to delete message SID ${messageSid} after ${maxRetries} attempts.`);
-        }
-    } catch (error) {
-        console.error(`Error fetching message status for SID ${messageSid}:`, error);
-    }
+        const cronSchedule = `${reminderDate.getUTCMinutes()} ${reminderDate.getUTCHours()} ${reminderDate.getUTCDate()} ${reminderDate.getUTCMonth() + 1} *`;
+        
+        cron.schedule(cronSchedule, () => {
+            sendExamReminder(accountSid, authToken, phoneNumber, subject, examDate, daysBefore);
+        });
+    });
 }
 
-// Webhook to handle incoming WhatsApp responses (button clicks)
-app.post('/incoming-message', (req, res) => {
-    const messageSid = req.body.MessageSid;
-    const userResponse = req.body.Body;
+// Function to send WhatsApp reminder for exams
+function sendExamReminder(accountSid, authToken, phoneNumber, subject, examDate, daysBefore) {
+    const client = twilio(accountSid, authToken);
 
-    console.log("Webhook hit with body:", req.body);
-
-    if (userResponse && userResponse.trim() === 'סיימתי') {
-        console.log("Button סיימתי pressed.");
-        // Start polling for the message status and delete it when possible
-        waitForDeliveryAndDelete(messageSid);
+    let messageBody = `תזכורת למבחן בנושא ${subject}. תאריך המבחן: ${examDate}. `;
+    if (daysBefore === 1) {
+        messageBody += "המבחן מתקיים מחר!";
+    } else {
+        messageBody += `נותרו ${daysBefore} ימים עד למבחן.`;
     }
 
-    res.status(200).send();  // Always respond with 200 OK
-});
+    client.messages.create({
+        from: 'whatsapp:+14155238886',  // Twilio Sandbox number
+        to: phoneNumber,
+        body: messageBody,
+    }).then(message => {
+        console.log(`Reminder sent with SID: ${message.sid}`);
+    }).catch(error => {
+        console.error('Error sending reminder:', error);
+    });
+}
 
 // Start the Express server
 app.listen(port, () => {
