@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: './.env' });
 const express = require('express');
 const twilio = require('twilio');
 const { sendInteractiveMessage } = require('./whatsappBot');
