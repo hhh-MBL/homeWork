@@ -110,7 +110,7 @@
                 <input type="text" id="contentSid" name="contentSid" placeholder="Your Twilio Content SID" required>
 
                 <!-- Phone Number to send to -->
-                <label for="phoneNumber">מספר טלפון:</label>
+                <label for="phoneNumber">מספר טלפון (לשליחת ההודעה):</label>
                 <input type="text" id="phoneNumber" name="phoneNumber" placeholder="whatsapp:+972XXXXXXXXX" required>
 
                 <label for="subject">מקצוע:</label>
@@ -126,7 +126,7 @@
             </form>
         </div>
 
-        <!-- Section for setting up exams/tests (No Content SID required) -->
+        <!-- Section for setting up exams/tests -->
         <div class="container">
             <h2>הגדרת תזכורות למבחנים</h2>
             <form id="examForm" action="/set-exam" method="POST">
@@ -137,6 +137,10 @@
                 <!-- Twilio Auth Token -->
                 <label for="authTokenExam">Twilio Auth Token:</label>
                 <input type="text" id="authTokenExam" name="authTokenExam" placeholder="Your Twilio Auth Token" required>
+
+                <!-- Phone Number for exam reminder -->
+                <label for="phoneNumberExam">מספר טלפון (לתזכורות למבחנים):</label>
+                <input type="text" id="phoneNumberExam" name="phoneNumberExam" placeholder="whatsapp:+972XXXXXXXXX" required>
 
                 <label for="examSubject">מקצוע המבחן:</label>
                 <input type="text" id="examSubject" name="examSubject" required>
