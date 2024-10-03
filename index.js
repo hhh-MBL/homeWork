@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const { sendInteractiveMessage } = require('./whatsappBot');
 
@@ -17,11 +16,11 @@ app.get('/', (req, res) => {
 
 // Route for submitting homework and sending a WhatsApp notification
 app.post('/submit-lesson', async (req, res) => {
-    const { subject, lessonDetails, dueDate } = req.body;
+    const { accountSid, authToken, phoneNumber, subject, lessonDetails, dueDate } = req.body;
 
     try {
-        // Send the interactive WhatsApp message
-        await sendInteractiveMessage(subject, lessonDetails, dueDate);
+        // Pass the credentials and phone number dynamically
+        await sendInteractiveMessage(accountSid, authToken, phoneNumber, subject, lessonDetails, dueDate);
         res.status(200).send("Homework submission notification sent via WhatsApp.");
     } catch (error) {
         console.error("Error submitting homework:", error);
