@@ -1,18 +1,16 @@
 const twilio = require('twilio');
 
-// Send an interactive message with Content SID
-async function sendInteractiveMessage(accountSid, authToken, contentSid, phoneNumber, subject, lessonDetails, dueDate) {
-    const client = twilio(accountSid, authToken);
-
+// Function to send interactive WhatsApp message using Twilio API
+async function sendInteractiveMessage(client, contentSid, phoneNumber, subject, lessonDetails, dueDate) {
     try {
         const message = await client.messages.create({
             from: 'whatsapp:+14155238886',  // Twilio Sandbox number
-            to: phoneNumber,                // Recipient's WhatsApp number
-            contentSid: contentSid,          // Content template SID provided via form
+            to: phoneNumber,
+            contentSid: contentSid,  // Content template SID from Twilio
             contentVariables: JSON.stringify({
-                '1': subject,         // Variable 1: Subject of the homework
-                '2': lessonDetails,   // Variable 2: Actual homework details
-                '3': dueDate          // Variable 3: Homework due date
+                '1': subject,         // Corresponds to {{1}} in the content template
+                '2': lessonDetails,   // Corresponds to {{2}} in the content template
+                '3': dueDate          // Corresponds to {{3}} in the content template
             })
         });
 

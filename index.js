@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const twilio = require('twilio');
-const { sendInteractiveMessage } = require('./whatsappBot');
 const cron = require('node-cron');
+const { sendInteractiveMessage } = require('./whatsappBot');  // Import the message sending function
 
 const app = express();
 const port = 3000;
@@ -10,26 +10,11 @@ const port = 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // Handle JSON data
 
-// Twilio credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-
-// In-memory storage for exams (replace with a database for persistent storage if needed)
-let examData = {};
-
-// Serve the HTML form
-const path = require('path');
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Route for submitting homework and sending a WhatsApp notification
 app.post('/submit-lesson', async (req, res) => {
     const { accountSid, authToken, contentSid, phoneNumber, subject, lessonDetails, dueDate } = req.body;
 
-    // Initialize the Twilio client with credentials from the form
+    // Dynamically set up Twilio client with user-provided credentials
     const client = twilio(accountSid, authToken);
 
     try {
@@ -44,13 +29,10 @@ app.post('/submit-lesson', async (req, res) => {
 
 // Route for setting up exams and scheduling reminders
 app.post('/set-exam', (req, res) => {
-    const { accountSidExam, authTokenExam, phoneNumber, examSubject, examDate } = req.body;
-
-    // Store exam details in memory
-    examData[examSubject] = { examDate };
+    const { accountSidExam, authTokenExam, phoneNumberExam, examSubject, examDate } = req.body;
 
     // Schedule reminders for 3, 2, and 1 day(s) before the exam
-    scheduleReminders(accountSidExam, authTokenExam, phoneNumber, examSubject, examDate);
+    scheduleReminders(accountSidExam, authTokenExam, phoneNumberExam, examSubject, examDate);
     res.status(200).send("Exam set and reminders will be sent.");
 });
 
@@ -65,8 +47,9 @@ function scheduleReminders(accountSid, authToken, phoneNumber, subject, examDate
         const reminderDate = new Date(examDateObj);
         reminderDate.setDate(reminderDate.getDate() - daysBefore);
 
+        // Schedule cron job to send reminder
         const cronSchedule = `${reminderDate.getUTCMinutes()} ${reminderDate.getUTCHours()} ${reminderDate.getUTCDate()} ${reminderDate.getUTCMonth() + 1} *`;
-        
+
         cron.schedule(cronSchedule, () => {
             sendExamReminder(accountSid, authToken, phoneNumber, subject, examDate, daysBefore);
         });
